@@ -2,6 +2,9 @@ package bot.embeds;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bson.Document;
 
 import database.UserDB;
@@ -12,16 +15,17 @@ import yahoofinance.YahooFinance;
 
 public class PortfolioEmbed extends EmbedBuilder {
 	
-	public PortfolioEmbed(User user) {
+	public PortfolioEmbed(User user, int pageNum) {
 		super();
-		init(user);
+		init(user, pageNum);
 	}
 	
-	private void init(User user) {
-		
-		// total value
-		// quant and price of each stock
-		
+	public PortfolioEmbed(User user, Stock stock) {
+		super();
+		initStock(user, stock);
+	}
+	
+	private void init(User user, int pageNum) {
 		long ID = user.getIdLong();
 		
 		Document doc = UserDB.getPortfolio(ID);
@@ -34,24 +38,41 @@ public class PortfolioEmbed extends EmbedBuilder {
 			pageCap = size / 5 + 1;
 
 		this.setAuthor((user.getName() + "'s portfolio").toLowerCase(), user.getAvatarUrl(), user.getAvatarUrl());
-		this.setFooter("Showing page " + 1 + " of " + pageCap);
-		this.setDescription("**Total Equity: $" + equity(doc) + "**");
+		this.setFooter("Showing page " + pageNum + " of " + pageCap);
+		this.setDescription("**==========================\nTotal Equity: $" + String.format("%.2f", equity(doc)) + "\n==========================**");
 		
-		int counter = 0;
-		for (String ticker : doc.keySet()) {
-			if (counter == 5)
-				break;
+		int counter = (pageNum - 1) * 5;
+		int limit = counter + 5;
+		
+		List<String> list = new ArrayList<String>(doc.keySet());
+		for (int i = counter; i < Math.min(limit, list.size()); i++) {
 			Stock stock;
 			try {
+				String ticker = list.get(i).toLowerCase();
 				stock = YahooFinance.get(ticker);
-				addField(ticker.toUpperCase().replace("-USD", ""), "$" + String.format("%.2f", stock.getQuote().getPrice().doubleValue()), true);
-				addField("Shares", doc.getDouble(ticker) + "", true);
-				addField("Equity", "$" + String.format("%.2f", (doc.getDouble(ticker) * stock.getQuote().getPrice().doubleValue())), true);
+				if (stock != null) {
+					addField(ticker.toUpperCase().replace("-USD", ""), "$" + String.format("%.2f", stock.getQuote().getPrice().doubleValue()), true);
+					addField("Shares", doc.getDouble(ticker) + "", true);
+					addField("Equity", "$" + String.format("%.2f", (doc.getDouble(ticker) * stock.getQuote().getPrice().doubleValue())), true);
+				} else {
+					addField("", "", true);
+					addField("", "", true);
+					addField("", "", true);
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			counter++;
 		}
+		setColor(new Color(0x05cc05));
+	}
+	
+	private void initStock(User user, Stock stock) {
+		String ticker = stock.getQuote().getSymbol().toLowerCase();
+		Document doc = UserDB.getPortfolio(user.getIdLong());
+		setAuthor((user.getName() + "'s $" + stock.getQuote().getSymbol() + " Stock"), user.getAvatarUrl(), user.getAvatarUrl());
+		addField(ticker.toUpperCase().replace("-USD", ""), "$" + String.format("%.2f", stock.getQuote().getPrice().doubleValue()), true);
+		addField("Shares", doc.getDouble(ticker) + "", true);
+		addField("Equity", "$" + String.format("%.2f", (doc.getDouble(ticker) * stock.getQuote().getPrice().doubleValue())), true);
 		setColor(new Color(0x05cc05));
 	}
 	

@@ -25,7 +25,6 @@ public class UserDB {
 	
 	// static init block for static acess to the db
 	static {
-		System.out.println(URI);
 		client = MongoClients.create(URI);
 		db = client.getDatabase("MongoDB");
 		col = db.getCollection("UserData");
@@ -57,16 +56,6 @@ public class UserDB {
 		Bson newValue = new Document("balance", balance);
 		Bson updateOperation = new Document("$set", newValue);
 		col.findOneAndUpdate(doc, updateOperation);
-	}
-	
-	// checks whether a user already exists
-	private static boolean exists(long ID) {
-		return getUser(ID) != null;
-	}
-	
-	// gets the user
-	private static Document getUser(long ID) {
-		return col.find(new Document("_id", ID)).first();
 	}
 	
 	// buys the stock
@@ -180,5 +169,13 @@ public class UserDB {
 		for (String ticker: innerDoc.keySet()) {
 			sellStock(ticker, ID);
 		}
+	}
+	
+	private static boolean exists(long ID) {
+		return getUser(ID) != null;
+	}
+
+	private static Document getUser(long ID) {
+		return col.find(new Document("_id", ID)).first();
 	}
 }
