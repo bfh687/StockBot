@@ -14,9 +14,8 @@ public class MarketCommand extends ListenerAdapter {
         if (!msg.equals(StockBot.COMMAND_PREFIX + "market"))
         	return;
         
-        StockMarket market = new StockMarket(event.getJDA());
         String marketStatus = null;
-        if (market.isOpen()) {
+        if (StockMarket.isOpen()) {
         	marketStatus = "open";
         } else {
         	marketStatus = "closed";

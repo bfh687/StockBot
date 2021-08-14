@@ -3,6 +3,7 @@ package bot.commands.stock;
 import java.util.HashSet;
 
 import bot.driver.StockBot;
+import bot.stock.StockMarket;
 import database.UserDB;
 import net.dv8tion.jda.api.entities.Message.MentionType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -19,6 +20,11 @@ public class StockBuyCommand extends ListenerAdapter {
 		
 		if (!args[0].equals(StockBot.COMMAND_PREFIX + "buy") || args.length != 3)
 			return;
+		
+		if (!StockMarket.isOpen()) {
+			event.getMessage().reply("The market is currently closed.").queue();
+			return;
+		}
 		
 		long ID = event.getAuthor().getIdLong();
 		String ticker = args[1];

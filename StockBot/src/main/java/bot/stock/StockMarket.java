@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
 
 public class StockMarket {
-	
+
 	private boolean isOpen;
 	private JDA jda;
 	
@@ -21,8 +21,15 @@ public class StockMarket {
 		setOnlineStatus();
 	}
 	
-	public boolean isOpen() {
-		return isOpen;
+	public static boolean isOpen() {
+		Calendar c = Calendar.getInstance();
+		int hour = c.get(Calendar.HOUR_OF_DAY);
+		int minute = c.get(Calendar.MINUTE);
+		if ((hour < 6 || (hour == 6 && minute < 30)) || hour > 12) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 	
 	public void monitor() {
@@ -105,20 +112,14 @@ public class StockMarket {
 	}
 	
 	private void setMarketStatus() {
-		Calendar c = Calendar.getInstance();
-		int hour = c.get(Calendar.HOUR_OF_DAY);
-		int minute = c.get(Calendar.MINUTE);
-		if ((hour < 6 || (hour == 6 && minute < 30)) || hour > 12) {
-			isOpen = false;
-		} else {
-			isOpen = true;
-		}
+		
 	}
 	
 	private void setOnlineStatus() {
-		if (isOpen) 
+		if (isOpen) {
 			jda.getPresence().setStatus(OnlineStatus.ONLINE);
-		else
+		} else {
 			jda.getPresence().setStatus(OnlineStatus.DO_NOT_DISTURB);
+		}
 	}
 }

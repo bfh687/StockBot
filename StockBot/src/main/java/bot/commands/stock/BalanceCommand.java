@@ -28,13 +28,13 @@ public class BalanceCommand extends ListenerAdapter {
         	ID = event.getMessage().getMentionedMembers().get(0).getIdLong();
             discordID = "<@" + ID + ">";
         	try {
-	        	channel.sendMessage(discordID + "'s balance: $" + UserDB.getBalance(ID)).allowedMentions(new HashSet<MentionType>()).queue();
+	        	channel.sendMessage(discordID + "'s balance: $" + String.format("%.2f", UserDB.getBalance(ID))).allowedMentions(new HashSet<MentionType>()).queue();
 	        } catch (NullPointerException e) {
 	        	channel.sendMessage(discordID + " has not yet set up a user profile.").allowedMentions(new HashSet<MentionType>()).queue();
 	        }
         } else {
         	try {
-	        	channel.sendMessage(discordID + "'s balance: $" + UserDB.getBalance(ID)).allowedMentions(new HashSet<MentionType>()).queue();
+	        	channel.sendMessage(discordID + "'s balance: $" + String.format("%.2f", UserDB.getBalance(ID))).allowedMentions(new HashSet<MentionType>()).queue();
 	        } catch (NullPointerException e) {
 	        	event.getMessage().reply("You have not yet set up a user profile. To get started, use *!setup*.").allowedMentions(new HashSet<MentionType>()).queue();
 	        }

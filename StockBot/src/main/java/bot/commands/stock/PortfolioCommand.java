@@ -28,7 +28,12 @@ public class PortfolioCommand extends ListenerAdapter {
 		
 		if (args.length == 1) {
 			try {
-				event.getChannel().sendMessageEmbeds(new PortfolioEmbed(event.getAuthor(), 1).build()).queue();
+				long ID = event.getAuthor().getIdLong();
+				Document doc = UserDB.getPortfolio(ID);
+				if (doc != null) 
+					event.getChannel().sendMessageEmbeds(new PortfolioEmbed(event.getAuthor(), 1).build()).queue();
+				else
+					event.getMessage().reply("You do not own any stocks yet. Use **!buy [ticker] [amount]** to buy your first stock!").queue();
 			} catch (Exception e) {
 				event.getMessage().reply("You have not yet set up your user profile.").queue();
 			}

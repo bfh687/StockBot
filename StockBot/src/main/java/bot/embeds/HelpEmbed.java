@@ -26,7 +26,7 @@ public class HelpEmbed extends EmbedBuilder {
 									"**!balance** - Gets your current balance.\n" +
 									   "**!balance @user** - Gets the current balance of the given user.\n" +
 								       "**!portfolio [page-number]** - Shows your stock portfolio.\n" +
-								       "**!portfolio @user [page-number]** - Shows your stock portfolio.", false);
+								       "**!portfolio @user [page-number]** - Shows then mentioned user's stock portfolio.", false);
 		
 		addField("Utility Commands", "**!about** - Gives information about StockBot.\n" + 
 									      "**!help** - Gets information about StockBot command usage.\n" +

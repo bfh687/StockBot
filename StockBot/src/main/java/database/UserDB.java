@@ -134,7 +134,6 @@ public class UserDB {
 			new BasicDBObject("$set", new BasicDBObject("portfolio", innerDoc)));
 	}
 	
-	// sells all of the given stock
 	public static void sellStock(String ticker, long ID) {
 		Document doc = (Document) getUser(ID);
 		Document innerDoc = (Document) doc.get("portfolio");
@@ -169,6 +168,10 @@ public class UserDB {
 		for (String ticker: innerDoc.keySet()) {
 			sellStock(ticker, ID);
 		}
+	}
+	
+	public static void clearDB() {
+		col.deleteMany(new BasicDBObject());
 	}
 	
 	private static boolean exists(long ID) {

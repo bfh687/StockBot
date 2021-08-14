@@ -1,4 +1,4 @@
-package bot.commands.utility;
+package bot.commands.info;
 
 import bot.driver.StockBot;
 import bot.embeds.AboutEmbed;
